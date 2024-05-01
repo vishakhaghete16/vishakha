@@ -1,0 +1,125 @@
+package lpcctables;
+import java.util.*; 
+
+public class codeaddress {
+	 
+	    private List<String[]> code; 
+	     private int tempCount; 
+	     public codeaddress() { 
+	         code = new ArrayList<>(); 
+	         tempCount = 0; 
+	     } 
+	     public String newTemp() {          
+	         String tempName = "t" + tempCount; 
+	         tempCount++; 
+	         return tempName; 
+	     } 
+	     
+	     
+	    public void genCode(String op, String arg1, String arg2, String result) {          
+	        String[] instruction = {op, arg1, arg2, result}; 
+	         code.add(instruction); 
+	     } 
+	     public String infixToPostfix(String expression) {    //Initialize Precedence Map:
+
+	         Map<Character, Integer> precedence = new HashMap<>(); 
+	         precedence.put('+', 1); 
+	         precedence.put('-', 1); 
+	         precedence.put('*', 2); 
+	         precedence.put('/', 2); 
+	         precedence.put('^', 3); 
+	        Stack<Character> stack = new Stack<>(); 
+	         StringBuilder postfix = new StringBuilder();          
+	         String[] tokens = expression.split("\\s+");  //Iterate Over Tokens:
+	         for (String token : tokens) { 
+	             char ch = token.charAt(0); 
+	             if (Character.isDigit(ch) || Character.isLetter(ch)) { 
+	                 postfix.append(token).append(" ");           // Handle Operands:
+	             } else if (ch == '(') {                          //Handle Opening Parentheses:
+	                 stack.push(ch); 
+	             } else if (ch == ')') { 
+	                 while (!stack.isEmpty() && stack.peek() != '(') {                     postfix.append(stack.pop()).append(" "); 
+	                 } 
+	                 stack.pop(); // Discard '(' 
+	             } else { 
+	                 while (!stack.isEmpty() && precedence.getOrDefault(stack.peek(), 0) >=  //Handle Operators:
+	precedence.getOrDefault(ch, 0)) { 
+	                     postfix.append(stack.pop()).append(" "); 
+	                 } 
+	                 stack.push(ch); 
+	             } 
+	         } 
+	         while (!stack.isEmpty()) { 
+	            postfix.append(stack.pop()).append(" "); 
+	         } 
+	         return postfix.toString().trim(); 
+	     } 
+	     public String generateExpressionCode(String expression) { 
+	         String postfixExpression = infixToPostfix(expression); 
+	         String[] tokens = postfixExpression.split("\\s+");          Stack<String> stack = new Stack<>(); 
+	         for (String token : tokens) { 
+	             char ch = token.charAt(0); 
+	             if (Character.isDigit(ch) || Character.isLetter(ch)) {                 
+	                 stack.push(token);              
+	                 
+	             } else { 
+	                 String op = token; 
+	                 String arg2 = stack.pop(); 
+	                 String arg1 = stack.pop();                  
+	                 String result = newTemp(); 
+	                 genCode(op, arg1, arg2, result); 
+	                 stack.push(result); 
+	             } 
+	         } 
+	         return stack.pop(); 
+	    } 
+	     public String displayReadableCode() { 
+	         StringBuilder readableCode = new StringBuilder(); 
+	         for (String[] instruction : code) { 
+	             String readableInstruction = instruction[3] + " = " + instruction[1] + " " + instruction[0] + " " + instruction[2]; 
+	             readableCode.append(readableInstruction).append("\n"); 
+	         } 
+	         return readableCode.toString(); 
+	     } 
+	     public static void main(String[] args) { 
+	         Scanner scanner = new Scanner(System.in); 
+	        System.out.print("Enter the expression: "); 
+	         String expression = scanner.nextLine(); 
+	         codeaddress tac = new codeaddress(); 
+	         String result = tac.generateExpressionCode(expression); 
+	         System.out.println("\nReadable code:"); 
+	         System.out.println(tac.displayReadableCode()); 
+	     } 
+	 }
+
+
+
+//
+////Initialize Precedence Map:
+//A HashMap named precedence is created to store the precedence of operators. Precedence refers to the priority of operators in an expression.
+//Each operator (+, -, *, /, ^) is mapped to an integer value representing its precedence. Higher precedence values mean higher priority.
+//Iterate Over Tokens:
+//The method splits the input expression into individual tokens (operands, operators, and parentheses) using the split method.
+//It iterates over each token in the tokens array.
+//Handle Operands:
+//If the token is a digit or a letter (operand), it's appended to the postfix string followed by a space.
+//Operands are directly added to the output expression.
+//Handle Opening Parentheses:
+//If the token is an opening parenthesis '(', it's pushed onto the stack.
+//Opening parentheses are placeholders to determine the order of evaluation.
+//Handle Closing Parentheses:
+//If the token is a closing parenthesis ')', it signifies the end of a sub-expression.
+//The method pops operators from the stack and appends them to the postfix string until it encounters the corresponding opening parenthesis '('. This ensures that all operators within the parentheses are placed correctly in the postfix expression.
+//The opening parenthesis '(' is discarded from the stack.
+//Handle Operators:
+//If the token is an operator (+, -, *, /, ^), it needs to be placed in the postfix expression based on its precedence.
+//The method compares the precedence of the current operator with the precedence of the operator at the top of the stack.
+//If the precedence of the current operator is less than or equal to the precedence of the operator at the top of the stack, it pops the operator from the stack and appends it to the postfix string. This ensures that higher-precedence operators are evaluated first.
+//Then, it pushes the current operator onto the stack.
+//Process Remaining Operators:
+//After processing all tokens, the method checks if there are any remaining operators in the stack.
+//It pops any remaining operators from the stack and appends them to the postfix string.
+//Return Postfix Expression:
+//Finally, the method returns the postfix string, which represents the postfix notation of the input infix expression.
+//Postfix notation is easier to evaluate because it eliminates the need for parentheses and follows a clear order of operations based on operator precedence
+

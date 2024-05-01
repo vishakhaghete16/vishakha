@@ -1,0 +1,130 @@
+package lpcctables;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Ltable {
+    static List<String[]> EMOT = new ArrayList<>();
+
+    public static void main(String[] args) {
+        EMOT.add(new String[]{"STOP", "1", "0"});
+        EMOT.add(new String[]{"ADD", "1", "1"});
+        EMOT.add(new String[]{"SUB", "1", "2"});
+        EMOT.add(new String[]{"MULT", "1", "3"});
+        EMOT.add(new String[]{"MOVER", "1", "4"});
+        EMOT.add(new String[]{"MOVEM", "1", "5"});
+        EMOT.add(new String[]{"COMP", "1", "6"});
+        EMOT.add(new String[]{"BC", "1", "7"});
+        EMOT.add(new String[]{"DIV", "1", "8"});
+        EMOT.add(new String[]{"READ", "1", "9"});
+        EMOT.add(new String[]{"PRINT", "1", "10"});
+        EMOT.add(new String[]{"START", "3", "1"});
+        EMOT.add(new String[]{"END", "3", "2"});
+        EMOT.add(new String[]{"ORIGIN", "3", "3"});
+        EMOT.add(new String[]{"EQU", "3", "4"});
+        EMOT.add(new String[]{"LTORG", "3", "5"});
+        EMOT.add(new String[]{"DS", "2", "1"});
+        EMOT.add(new String[]{"DC", "2", "2"});
+        EMOT.add(new String[]{"AREG", "4", "1"});
+        EMOT.add(new String[]{"BREG", "4", "2"});
+        EMOT.add(new String[]{"CREG", "4", "3"});
+        EMOT.add(new String[]{"DREG", "4", "4"});
+
+        List<String[]> tokens = new ArrayList<>();
+        int lc = 0;
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("INPUTCODE.txt"));
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                tokens.add(line.split("\\s+"));
+            }
+
+            lc = Integer.parseInt(tokens.get(0)[tokens.get(0).length - 1]);
+            List<Integer> lcList = new ArrayList<>();
+            for (int i = 0; i < tokens.size(); i++) {
+                lcList.add(lc);
+                int length = tokens.get(i).length;
+
+                if (length == 4) {
+                    String operator = tokens.get(i)[1];
+                    int clas = getClas(operator);
+                    if (clas == 1) {
+                        lc++;
+                    } else if (clas == 2) {
+                        if (operator.equals("DS")) {
+                            int incr = Integer.parseInt(tokens.get(i)[tokens.get(i).length - 1]);
+                            lc += incr;
+                        } else {
+                            lc++;
+                        }
+                    }
+                } else {
+                    String operator = (tokens.get(i).length == 4 && (tokens.get(i)[1].equals("DS") || tokens.get(i)[1].equals("DC"))) ?
+                                      tokens.get(i)[1] : tokens.get(i)[0];
+                    int clas = getClass(operator);
+
+                    if (clas == 1) {
+                        lc++;
+                    } else if (clas == 2) {
+                        if (operator.equals("DS")) {
+                            int incr = Integer.parseInt(tokens.get(i)[tokens.get(i).length - 1]);
+                            lc += incr;
+                        } else {
+                            lc++;
+                        }
+                    }
+                }
+            }
+
+            List<String[]> lt = new ArrayList<>();
+            int end = lcList.get(lcList.size() - 1);
+
+            for (String[] i : tokens) {
+                if (i[i.length - 1].charAt(0) == '=') {
+                    lt.add(new String[]{i[i.length - 1], "-1"});
+                }
+            }
+
+            for (String[] i : lt) {
+                i[1] = String.valueOf(end);
+                end++;
+            }
+
+            for (String[] i : lt) {
+                for (String s : i) {
+                    System.out.print(s + " ");
+                }
+                System.out.println();
+            }
+
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static int getClas(String operator) {
+        int clas = 0;
+        for (String[] i : EMOT) {
+            if (i[0].equals(operator)) {
+                clas = Integer.parseInt(i[1]);
+            }
+        }
+        return clas;
+    }
+
+    static int getClass(String operator) {
+        int clas = 0;
+        for (String[] i : EMOT) {
+            if (i[0].equals(operator)) {
+                clas = Integer.parseInt(i[1]);
+            }
+        }
+        return clas;
+    }
+}

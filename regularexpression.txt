@@ -1,0 +1,88 @@
+/*
+%{
+#include<stdio.h>
+%}
+%%
+"{"                   {printf("opening curly brace:%s\n",yytext);}
+"}"                   {printf("closing curly brace:%s\n",yytext);}
+"="                   {printf("assignment operator:%s\n",yytext);}
+";"                   {printf("semicolon:%s\n",yytext);}
+[0-9]+                {printf("number:%s\n",yytext);}
+","                   {printf("comma:%s\n",yytext);}
+(int|char|string)     {printf("keywords/datatypes:%s\n",yytext);}
+[a-zA-Z_][a-zA-Z0-9_]* {printf("Identifier: %s\n", yytext); }
+[-+*/]                {printf("arithmetic operators:%s\n",yytext);}
+[\t\n]+               { /* Ignore whitespace */ }
+%%
+
+int yywrap(void){
+}
+int main(){
+yyin=fopen("input.txt","r");
+yylex();
+fclose(yyin);
+return 0;
+}
+*/
+
+/*gedit regularexpression.l
+vishakha@vishakha-VirtualBox:~/vishakha/LPCCassignment$ flex regularexpression.l
+vishakha@vishakha-VirtualBox:~/vishakha/LPCCassignment$ gcc lex.yy.c -o regularexpression -lfl
+vishakha@vishakha-VirtualBox:~/vishakha/LPCCassignment$ ./regularexpression
+*/
+
+
+
+
+
+
+%{
+
+#include<stdio.h>
+
+%}
+
+
+
+%%
+
+
+
+[\t]+          ;  /* Ignore whitespace */
+
+int            { printf("int, is a data type integer\n"); }
+
+m|n|o          { printf("%s, is a variable\n", yytext); }
+
+=              { printf("=, is a assignment operator\n"); }
+
+2|10           { printf("%s, is a integer\n", yytext); }
+
+;              { printf(";, is a semicolon\n"); }
+
+-              { printf("-, is a arithmetic operator\n"); }
+
+
+
+%%
+
+
+
+int yywrap(void) {
+
+    return 1;
+
+}
+
+
+
+int main(void) {
+
+    yylex();
+
+    yywrap();
+
+    return 0;
+
+}
+

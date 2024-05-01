@@ -1,0 +1,128 @@
+
+%{
+/*
+* We expnd upon the first example by adding recognition of scane other
+* parts of speech.
+*/
+#include<stdio.h>
+%}
+%%
+
+[\t]+       /* ignore whitespace */ ;
+is |
+am |
+Dread |
+are |
+were |
+was |
+be |
+being |
+been |
+do |
+does |
+did |
+will |
+would |
+should |
+can |
+could |
+has |
+have |
+had |
+Run |
+arrive |
+stop | 
+give |
+kill |
+needs |
+imagines |
+went |
+comes |
+go        	{ printf("%s: is a verb\n", yytext); }
+
+very |
+shrPly |
+gently |
+quietly |
+calmly |
+how |
+not |
+never |
+after |
+angrily     	{ printf ("%s: is an adverb\n" , yytext) ; }
+
+to |
+from |
+behind |
+above |
+below |
+for |
+reason |
+in |
+with |
+into |
+toward |
+between  { printf ("%s: is a preposition\n", yytext);}
+
+if |
+then |
+and |
+but |
+that |
+than |
+or 		{ printf ("%s: is a conjunction\n", yytext);}
+
+their |
+my |
+Your |
+his |
+her |
+fine |
+important |
+Human |
+strong |
+dramatic |
+binary |
+basic |
+two |
+distinct |
+empty |
+wiser |
+
+its 		{ printf("%s: is an adjective\n", yytext); }
+
+I |
+YOU |
+he |
+she |
+we |
+it |
+its |
+itself |
+that |
+they 		{ printf("%s: in a pronoun\n", yytext); }
+
+
+
+all |
+the  |
+Every            { printf("%s: in a determiner\n", yytext); 
+
+[a-zA-Z]+ {
+	printf("%s: don't recognize, might be a noun\n", yytext);
+}
+.|\n { ECHO; /* normal default anyway */ }
+
+%%
+
+int yywrap(void){}
+main ( )
+{ 
+ printf("Enter a string :- ");
+ yylex();
+ return 0;  
+}
+/* flex ass1.l
+gcc lex.yy.c -o ass1 -lfl 
+./a.out
+*/

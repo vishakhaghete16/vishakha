@@ -1,0 +1,93 @@
+%{
+#include "y.tab.h"
+#include <stdlib.h>  // Include stdlib.h for exit function
+
+extern int yylineno;  // Declare yylineno for error reporting
+
+void yyerror(const char *s);  // Declare yyerror function
+%}
+
+%%
+
+[a-zA-Z_][a-zA-Z_0-9]*  { return IDENTIFIER; }
+.                      { yyerror("Invalid input"); }
+
+%%
+
+int yywrap(void) {
+    return 1;
+}
+
+
+
+
+
+
+
+
+
+
+%{
+#include <stdio.h>
+#include <stdlib.h>
+
+// Declare yytext for use in the parser
+extern char* yytext;
+
+void yyerror(const char *s);
+int yylex(void);
+
+%}
+
+%token IDENTIFIER
+
+%%
+
+input:
+    identifiers
+    ;
+
+identifiers:
+    | identifiers IDENTIFIER { printf("Valid variable name: %s\n", yytext); }
+    ;
+
+%%
+
+void yyerror(const char *s) {
+    fprintf(stderr, "Error: %s\n", s);
+    exit(1);
+}
+
+int main(void) {
+    printf("Enter variable names (Ctrl+D to end):\n");
+    yyparse();
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+vishakha@vishakha-VirtualBox:~/vishakha/LPCCassignment$ gedit variablename.y
+vishakha@vishakha-VirtualBox:~/vishakha/LPCCassignment$ yacc -d variablename.y
+vishakha@vishakha-VirtualBox:~/vishakha/LPCCassignment$ lex varible.l
+vishakha@vishakha-VirtualBox:~/vishakha/LPCCassignment$ yacc -d variablename.y
+vishakha@vishakha-VirtualBox:~/vishakha/LPCCassignment$ gcc lex.yy.c y.tab.c -o variablename -ll
+vishakha@vishakha-VirtualBox:~/vishakha/LPCCassignment$ ./variablename
+Enter variable names (Ctrl+D to end):
+pune
+Valid variable name: pune
+
+
+
+pune, punr,dbdv
+Valid variable name: pune
+Error: Invalid input
+

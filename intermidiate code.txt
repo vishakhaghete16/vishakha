@@ -198,3 +198,11 @@ assembly_code = [
 
 # Generate literal table
 IC(assembly_code)
+
+
+
+//IS(word) categorizes instructions.
+DL(word) categorizes data length.
+AD(word) categorizes assembler directives.
+RG(word) categorizes registers.
+CC(word) categorizes condition codes.
